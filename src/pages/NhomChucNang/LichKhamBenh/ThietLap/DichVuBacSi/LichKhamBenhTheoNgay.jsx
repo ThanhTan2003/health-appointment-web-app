@@ -7,6 +7,12 @@ import { faPlus, faPen, faCalendarXmark } from '@fortawesome/free-solid-svg-icon
 import ThemLichKhamMoi from './ThemLichKhamMoi';
 import CapNhatLichKham from './CapNhatLichKham'
 
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+import ConfirmModal from "./ConfirmModal"
+
 export default function LichKhamBenhTheoNgay() {
   const navigate = useNavigate();
   const { doctorId, day } = useParams();
@@ -17,6 +23,62 @@ export default function LichKhamBenhTheoNgay() {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
   const [serviceTimeFrameId, setServiceTimeFrameId] = useState(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedServiceTimeFrame, setSelectedServiceTimeFrame] = useState(null); // Lưu đối tượng cần xóa
+
+  const handleDeleteClick = (serviceTimeFrame) => {
+    setSelectedServiceTimeFrame(serviceTimeFrame); // Lưu đối tượng cần xóa
+    setIsDeleteModalOpen(true);                   // Mở modal
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      const accessToken = getToken();
+      if (!accessToken) {
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch(
+        `${CONFIG.API_GATEWAY}/medical/service-time-frame/delete/${selectedServiceTimeFrame.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        //toast.success(`Xóa lịch khám thành công!`);
+        const updatedServiceTimeFrames = serviceTimeFrames.filter(
+          (frame) => frame.id !== selectedServiceTimeFrame.id
+        );
+        setServiceTimeFrames(updatedServiceTimeFrames); // Cập nhật danh sách
+      } else {
+        //toast.error("Không thể xóa lịch khám!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi gọi API xóa:", error);
+      //toast.error("Có lỗi xảy ra, vui lòng thử lại!");
+    } finally {
+      setIsDeleteModalOpen(false); // Đóng modal
+    }
+  };
+
+  const showSuccess = async (success) => {
+    console.log(success)
+    toast.success(success, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
 
   const openModalAdd = (timeFrameId) => {
     setSelectedSlot(timeFrameId); // Chỉ lưu ID khung giờ
@@ -102,6 +164,8 @@ export default function LichKhamBenhTheoNgay() {
     return [...new Set(timeFrames.map((frame) => frame.session).filter(Boolean))]; // Lấy danh sách session duy nhất
   };
 
+
+
   const renderTimeSlots = (sessionName) => {
     const filteredTimeFrames = timeFrames.filter((frame) => frame.session === sessionName);
 
@@ -147,9 +211,13 @@ export default function LichKhamBenhTheoNgay() {
                   >
                     Sửa &nbsp;<FontAwesomeIcon icon={faPen} className="mr-1" />
                   </button>
-                  <button className="bg-white text-red-500 px-3 py-1 rounded-md hover:bg-red-500 hover:text-white transition duration-75 border border-red-500">
+                  <button
+                    className="bg-white text-red-500 px-3 py-1 rounded-md hover:bg-red-500 hover:text-white transition duration-75 border border-red-500"
+                    onClick={() => handleDeleteClick(frame)} // Mở modal
+                  >
                     Xóa &nbsp;<FontAwesomeIcon icon={faCalendarXmark} className="mr-1" />
                   </button>
+
                 </div>
               </td>
             </>
@@ -221,6 +289,14 @@ export default function LichKhamBenhTheoNgay() {
             serviceTimeFrameId={serviceTimeFrameId} // Truyền đúng ID của ServiceTimeFrame
           />
         )}
+
+        <ConfirmModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)} // Đóng modal
+          onConfirm={handleConfirmDelete}            // Xác nhận xóa
+          message={`Bạn có chắc chắn muốn xóa lịch khám tại khung giờ "${selectedServiceTimeFrame?.timeFrameResponse?.name}"?`}
+        />
+
       </div>
       <Outlet />
     </>

@@ -40,7 +40,7 @@ function ThongTinDangKy({ appointment }) {
                                 </p>
 
                                 <p className="text-lg mb-2">
-                                    {appointment?.dateTime || "Không có thông tin!"}
+                                    {appointment?.dateTimeFullName || "Không có thông tin!"}
                                 </p>
 
                                 <p className="text-lg mb-2">
@@ -268,7 +268,7 @@ function ThongTinHoSo({ patientsId }) {
                                 </p>
 
                                 <p className="text-lg mb-2">
-                                    <strong>Quan hệ: </strong>
+                                    <strong>Mối quan hệ: </strong>
                                 </p>
 
                                 <p className="text-lg mb-2">

@@ -171,7 +171,7 @@ const ThemTaiKhoan = ({ isOpen, onClose, onCreateSuccess }) => {
         pauseOnHover
         theme="light"
       />
-      <div className="bg-white rounded-lg shadow-lg w-1/3 max-h-[95vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-lg w-1/2 max-h-[95vh] overflow-y-auto">
         <div className="bg-sky-600 text-white p-3 px-6 rounded-t-lg flex justify-between items-center">
           <h2 className="text-lg font-bold"><FontAwesomeIcon icon={faUserPlus} />  &nbsp; Tạo tài khoản mới</h2>
           <button

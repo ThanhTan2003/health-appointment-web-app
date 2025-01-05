@@ -38,7 +38,7 @@ function ThongTinDangKy({ appointment }) {
                                 </p>
 
                                 <p className="text-lg mb-2">
-                                    {appointment?.dateTime || "Không có thông tin!"}
+                                    {appointment?.dateTimeFullName || "Không có thông tin!"}
                                 </p>
 
                                 <p className="text-lg mb-2">
@@ -266,7 +266,7 @@ function ThongTinHoSo({ patientsId }) {
                                 </p>
 
                                 <p className="text-lg mb-2">
-                                    <strong>Quan hệ: </strong>
+                                    <strong>Mối quan hệ: </strong>
                                 </p>
 
                                 <p className="text-lg mb-2">
@@ -439,6 +439,104 @@ function ThongTinThanhToan({ paymentId }) {
 
 }
 
+function ThongTinKetQua({ healthCheckResults, appointmentId, onAddResult }) {
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Trạng thái hiển thị ConfirmModal
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false); // Trạng thái hiển thị AddResultModal
+    const [selectedResult, setSelectedResult] = useState(null);
+
+    // Hàm xóa kết quả
+    const deleteResult = async (resultId) => {
+        try {
+            const response = await fetch(
+                `${CONFIG.API_GATEWAY}/his/health-check-result/delete/${resultId}`,
+                {
+                    method: "DELETE",
+                }
+            );
+
+            if (response.ok) {
+                //alert("Xóa thành công!");
+                if (onAddResult) onAddResult();
+            } else {
+                alert("Có lỗi xảy ra khi xóa!");
+            }
+        } catch (error) {
+            console.error("Lỗi khi gọi API xóa:", error);
+        }
+    };
+
+    // Hàm xử lý khi nhấn nút Xóa
+    const handleDelete = (result) => {
+        setSelectedResult(result);
+        setIsDeleteModalOpen(true); // Mở ConfirmModal
+    };
+
+    return (
+        <div>
+            {healthCheckResults ? (
+                <>
+                    <div className="border border-blue-600 rounded-lg shadow-md relative p-4 bg-white">
+                        <div className="absolute -top-4 left-4 bg-white px-2 text-blue-900 font-bold text-2xl">
+                            THÔNG TIN KẾT QUẢ KHÁM BỆNH
+                        </div>
+                        <br />
+                        <div className="md:col-span-2 pr-6 text-justify">
+                            <table className="w-full border-collapse border border-gray-200 shadow-lg rounded-md">
+                                <thead>
+                                    <tr className="bg-sky-600 text-white">
+                                        <th className="border border-gray-200 p-3 text-center">STT</th>
+                                        <th className="border border-gray-200 p-3 text-left">Tên kết quả</th>
+                                        <th className="border border-gray-200 p-3 text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white">
+                                    {healthCheckResults.length > 0 ? (
+                                        healthCheckResults.map((result, index) => (
+                                            <tr
+                                                key={result.id}
+                                                className="hover:bg-gray-100 transition duration-200 ease-in-out"
+                                            >
+                                                <td className="border border-gray-200 p-2 text-center">
+                                                    {index + 1}
+                                                </td>
+                                                <td className="border border-gray-200 p-2 text-zinc-700">
+                                                    {result.name}
+                                                </td>
+                                                <td className="border border-gray-200 p-2 text-center w-[200px]">
+                                                    <button
+                                                        onClick={() =>
+                                                            window.open(result.url, "_blank")
+                                                        }
+                                                        className="bg-white text-cyan-600 border border-cyan-600 px-4 py-2 rounded-md hover:bg-cyan-100 transition duration-75 w-4/5"
+                                                    >
+                                                        Xem chi tiết
+                                                    </button>
+                                                </td>
+                                                
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="4" className="text-center p-4">
+                                                Không có dữ liệu
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div className="text-center text-xl text-gray-500">
+                    Không có kết quả kiểm tra sức khỏe
+                </div>
+            )}
+
+        </div>
+    );
+}
+
 function ChiTietLichKham() {
 
     const navigate = useNavigate();
@@ -450,6 +548,8 @@ function ChiTietLichKham() {
     const [appointment, setAppointment] = useState(null);
 
     const { appointmentId } = useParams();
+
+    const [healthCheckResults, setHealthCheckResults] = useState([]);
 
     const getAppointment = async (accessToken) => {
         try {
@@ -474,6 +574,7 @@ function ChiTietLichKham() {
             console.log(data.patientsId)
             setPatientsId(data.patientsId)
             setPaymentId(data.paymentId)
+            setHealthCheckResults(data.checkResultResponseList)
 
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -509,6 +610,11 @@ function ChiTietLichKham() {
             <ThongTinDangKy appointment={appointment} />
             <ThongTinHoSo patientsId={patientsId} />
             <ThongTinThanhToan paymentId={paymentId} />
+            <ThongTinKetQua
+                healthCheckResults={healthCheckResults}
+                appointmentId={appointmentId}
+                onAddResult={getAppointment} // Truyền hàm callback
+            />
 
         </div>
     )

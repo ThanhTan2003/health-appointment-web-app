@@ -18,9 +18,7 @@ import ChiTietLichKham from '../../NhomChucNang/LichKhamBenh/HoSoDangKy/ChiTietL
 
 // Config cho tab
 const tabConfig = [
-    { id: 'ThongKe', name: 'Thống kê', icon: faChartSimple, path: 'thong-ke' },
     { id: 'HoSoDangKy', name: 'Hồ sơ đăng ký', icon: faBookMedical, path: 'ho-so-dang-ky' },
-    { id: 'LichKham', name: 'Lịch khám', icon: faCalendarDays, path: 'lich-kham' },
     { id: 'ThietLap', name: 'Thiết lập', icon: faSliders, path: 'thiet-lap' },
     { id: 'ThayTheBacSi', name: 'Thay thế bác sĩ', icon: faUserGroup, path: 'thay-the-bac-si' },
     { id: 'NgayNghi', name: 'Ngày nghỉ', icon: faSun, path: 'ngay-nghi' },
@@ -46,7 +44,7 @@ function TabMenu({ selectedTab, setSelectedTab }) {
     );
 }
 function App() {
-    const [selectedTab, setSelectedTab] = useState('ThongKe');
+    const [selectedTab, setSelectedTab] = useState('HoSoDangKy');
     const location = useLocation();
 
     // Cập nhật selectedTab khi URL thay đổi
@@ -72,9 +70,7 @@ function App() {
             {/* Content */}
             <div className="flex-1 bg-white mt-4 p-4 rounded shadow w-full">
                 <Routes>
-                    <Route index element={<ThongKe />} />
-
-                    <Route path='thong-ke' element={<ThongKe />} />
+                    <Route index element={<HoSoDangKy/>} />
 
                     <Route path="ho-so-dang-ky" element={<HoSoDangKy />}>
                         <Route path="xac-nhan/:appointmentId" element={<XacNhanLichKham />} />
@@ -82,7 +78,7 @@ function App() {
                         <Route path="*" element={<NotFound />} />
                     </Route>
 
-                    <Route path='lich-kham' element={<LichKham />}>
+                    {/* <Route path='lich-kham' element={<LichKham />}>
                         <Route index element={<Navigate to="2" replace />} />
 
                         <Route path=':day' element={<ThongTinNgayKham />} >
@@ -90,7 +86,7 @@ function App() {
                         </Route>
 
                         <Route path="*" element={<NotFound />} />
-                    </Route>
+                    </Route> */}
 
                     <Route path='thiet-lap' element={<ThietLap />} >
                         <Route path=':doctorId' element={<DichVuBacSi />} >

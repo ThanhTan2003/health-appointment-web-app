@@ -10,7 +10,6 @@ import NotFound from '../../NotFound';
 
 // Config cho tab
 const tabConfig = [
-    { id: 'ThongKe', name: 'Thống kê', icon: faChartSimple, path: 'thong-ke' },
     { id: 'DanhSach', name: 'Danh sách', icon: faTableList, path: 'danh-sach' },
 ];
 
@@ -61,8 +60,7 @@ function App() {
             {/* Content */}
             <div className="flex-1 bg-white mt-4 p-4 rounded shadow w-full">
                 <Routes>
-                    <Route index element={<ThongKe />} />
-                    <Route path='thong-ke' element={<ThongKe />} />
+                    <Route index element={<DanhSach />} />
                     <Route path='danh-sach' element={<DanhSach />}>
                         <Route path=':serviceId' element={<ThongTinHoSoBenhAn />} />
                         <Route path="*" element={<NotFound />} />

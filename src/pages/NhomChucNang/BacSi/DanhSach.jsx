@@ -270,7 +270,7 @@ function DanhSach() {
                                             </td>
 
                                             <td className="border border-gray-200 p-2 text-center">
-                                                <Link to={`${doctor.id}`}>
+                                                <Link to={`/bac-si/danh-sach/${doctor.id}`}>
                                                     <button
                                                         className="bg-cyan-600 text-white px-3 py-1 rounded-md hover:bg-cyan-700 transition duration-75"
                                                     // onClick={() => navigate(`/bac-si/danh-sach/${doctor.id}`)} // Điều hướng đến trang chi tiết bác sĩ

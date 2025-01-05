@@ -77,6 +77,9 @@ const ThemDichVuThuocChuyenKhoa = ({ isOpen, onClose, onSuccess }) => {
     }
 
     const getServices = async (accessToken) => {
+        //console.log("page: " + currentPage)
+        //console.log("size: " + pageSize)
+        //console.log(`${CONFIG.API_GATEWAY}/medical/service/specialty/not-null?doctor-id=${doctorId}&specialty-id=${specialtyId}&keyword=${keyword}&page=${currentPage}&size=${pageSize}`)
         try {
             const response = await fetch(
                 `${CONFIG.API_GATEWAY}/medical/service/specialty/not-null?doctor-id=${doctorId}&specialty-id=${specialtyId}&keyword=${keyword}&page=${currentPage}&size=${pageSize}`,

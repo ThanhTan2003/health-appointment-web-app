@@ -11,6 +11,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import ThemDichVuThuocChuyenKhoa from './DanhSachDichVu/ThemDichVuThuocChuyeKhoa'
 import ThemDichVuNgoaiChuyenKhoa from './DanhSachDichVu/ThemDichVuNgoaiChuyenKhoa'
 
+import ConfirmModal from "./ConfirmModal"
+
 
 function DanhSachDichVu() {
     const navigate = useNavigate();
@@ -31,6 +33,47 @@ function DanhSachDichVu() {
 
     const [showModalThemDVThuocChuyenKhoa, setShowModalThemDVThuocChuyenKhoa] = useState(false);
     const [showModalThemDVNgoaiChuyenKhoa, setShowModalThemDVNgoaiChuyenKhoa] = useState(false);
+
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedService, setSelectedService] = useState(null); // Lưu thông tin dịch vụ được chọn
+
+    const handleDeleteClick = (service) => {
+        setSelectedService(service); // Lưu thông tin dịch vụ cần xóa
+        setIsDeleteModalOpen(true);  // Mở modal
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            const accessToken = getToken();
+            if (!accessToken) {
+                navigate("/login");
+                return;
+            }
+
+            const response = await fetch(
+                `${CONFIG.API_GATEWAY}/medical/doctor-service/delete/${selectedService.id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            if (response.ok) {
+                toast.success(`Xóa dịch vụ "${selectedService.service?.name}" thành công!`);
+                const updatedServices = doctorServices.filter(service => service.id !== selectedService.id);
+                setDoctorServices(updatedServices); // Cập nhật danh sách
+            } else {
+                toast.error(`Không thể xóa dịch vụ "${selectedService.service?.name}"`);
+            }
+        } catch (error) {
+            console.error("Lỗi khi gọi API xóa:", error);
+            toast.error("Có lỗi xảy ra, vui lòng thử lại!");
+        } finally {
+            setIsDeleteModalOpen(false); // Đóng modal
+        }
+    };
 
 
     const openModalThemDVThuocChuyenKhoa = () => {
@@ -203,6 +246,7 @@ function DanhSachDichVu() {
         return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
     };
 
+
     return (
         <div className='border border-blue-600 rounded-lg shadow-md relative p-4'>
             <ToastContainer
@@ -323,10 +367,12 @@ function DanhSachDichVu() {
                                     <td className="border border-gray-200 p-2 text-center">
                                         <button
                                             className="bg-white text-red-500 px-3 py-1 rounded-md hover:bg-red-500 hover:text-white transition duration-75 border border-red-500"
+                                            onClick={() => handleDeleteClick(doctorService)} // Mở modal
                                         >
                                             Xóa &nbsp;<FontAwesomeIcon icon={faBan} />
                                         </button>
                                     </td>
+
 
                                 </tr>
                             ))
@@ -383,6 +429,14 @@ function DanhSachDichVu() {
                     onSuccess={showSuccess}
                 />
             }
+
+            <ConfirmModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)} // Đóng modal
+                onConfirm={handleConfirmDelete} // Xác nhận xóa
+                message={`Bạn có chắc chắn muốn xóa dịch vụ "${selectedService?.service?.name}"?`}
+            />
+
         </div>
     );
 }

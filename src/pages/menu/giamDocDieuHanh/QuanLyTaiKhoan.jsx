@@ -12,7 +12,6 @@ import ThongTinTaiKhoanDatLich from '../../NhomChucNang/TaiKhoan/ThongTinTaiKhoa
 
 // Config cho tab
 const tabConfig = [
-    { id: 'ThongKe', name: 'Thống kê', icon: faChartSimple, path: 'thong-ke' },
     { id: 'DanhSachTaiKhoanHeThong', name: 'Tài khoản hệ thống', icon: faUsersGear, path: 'tai-khoan-he-thong' },
     { id: 'DanhSachTaiKhoanDatLich', name: 'Tài khoản đặt lịch', icon: faUserGroup, path: 'tai-khoan-dat-lich' },
 ];
@@ -37,7 +36,7 @@ function TabMenu({ selectedTab, setSelectedTab }) {
     );
 }
 function App() {
-    const [selectedTab, setSelectedTab] = useState('ThongKe');
+    const [selectedTab, setSelectedTab] = useState('DanhSachTaiKhoanHeThong');
     const location = useLocation();
 
     // Cập nhật selectedTab khi URL thay đổi
@@ -63,8 +62,7 @@ function App() {
             {/* Content */}
             <div className="flex-1 bg-white mt-4 p-4 rounded shadow w-full">
                 <Routes>
-                    <Route index element={<ThongKe />} />
-                    <Route path='thong-ke' element={<ThongKe />} />
+                    <Route index element={<DanhSachTaiKhoanHeThong />} />
                     <Route path='tai-khoan-he-thong' element={<DanhSachTaiKhoanHeThong />}>
                         <Route path=':accountId' element={<ThongTinTaiKhoanHeThong />} />
                         <Route path="*" element={<NotFound />} />

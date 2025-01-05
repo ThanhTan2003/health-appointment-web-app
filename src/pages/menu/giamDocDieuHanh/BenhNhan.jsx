@@ -10,7 +10,6 @@ import NotFound from '../../NotFound';
 
 // Config cho tab
 const tabConfig = [
-    { id: 'ThongKe', name: 'Thống kê', icon: faChartSimple, path: 'thong-ke' },
     { id: 'DanhSach', name: 'Hồ sơ bệnh nhân', icon: faUsers, path: 'danh-sach' },
     { id: 'HoSoBenhAn', name: 'Hồ sơ bệnh án', icon: faFolderOpen, path: 'ho-so-benh-an' },
 ];
@@ -36,7 +35,7 @@ function TabMenu({ selectedTab, setSelectedTab }) {
     );
 }
 function App() {
-    const [selectedTab, setSelectedTab] = useState('ThongKe');
+    const [selectedTab, setSelectedTab] = useState('DanhSach');
     const location = useLocation();
 
     // Cập nhật selectedTab khi URL thay đổi
@@ -63,8 +62,7 @@ function App() {
             {/* Content */}
             <div className="flex-1 bg-white mt-4 p-4 rounded shadow w-full">
                 <Routes>
-                    <Route index element={<ThongKe />} />
-                    <Route path='thong-ke' element={<ThongKe />} />
+                    <Route index element={<DanhSach />} />
                     <Route path='danh-sach' element={<DanhSach />}>
                         <Route path=':patientId' element={<ThongTinBenhNhan />} />
                         <Route path="*" element={<NotFound />} />

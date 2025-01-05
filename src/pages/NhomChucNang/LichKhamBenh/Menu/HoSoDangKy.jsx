@@ -158,6 +158,38 @@ function DanhSach() {
     getAppointments(getToken());
   };
 
+  const syncAppointments = async (accessToken) => {
+    try {
+      const response = await fetch(
+        `${CONFIG.API_GATEWAY}/appointment/health-check-result/sync`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        console.log("Đồng bộ dữ liệu thành công!");
+        getAppointments(accessToken); // Gọi lại API để cập nhật danh sách
+      } else {
+        console.error("Lỗi khi đồng bộ dữ liệu:", await response.text());
+      }
+    } catch (error) {
+      console.error("Lỗi kết nối khi đồng bộ dữ liệu:", error);
+    }
+  };
+
+  const DongBoClick = () => {
+    const accessToken = getToken();
+    if (!accessToken) {
+      navigate("/login");
+    } else {
+      syncAppointments(accessToken)
+    }
+  }
+
 
   // Hàm chuyển đổi chuỗi tiếng Việt thành chuỗi không dấu
   const removeVietnameseTones = (str) => {
@@ -171,6 +203,30 @@ function DanhSach() {
           <div className="flex justify-between items-center mb-2">
             <div>
               <button
+                onClick={DongBoClick}
+                className="bg-sky-600 text-white py-2 px-4 rounded font-bold hover:bg-sky-700"
+                title='Đồng bộ dữ liệu với hệ thống quản lý lịch hẹn'
+              >
+                Đồng bộ dữ liệu
+                &nbsp;<FontAwesomeIcon icon={faRotate} />
+              </button>
+              <button
+                onClick={() => {
+                  const accessToken = getToken();
+                  if (accessToken) {
+                    getAppointments(accessToken);
+                  }
+                }}
+                className="ml-2 border border-sky-600 text-sky-600 py-2 px-4 rounded font-bold hover:bg-sky-100 transition"
+                title='Tải lại danh sách'
+              >
+                Tải lại danh sách
+                &nbsp;<FontAwesomeIcon icon={faRotate} />
+              </button>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
                 type="button"
                 onClick={() => setShowScanner(true)} // Hiển thị component quét mã vạch
                 className="bg-sky-600 text-white py-2 px-4 rounded hover:bg-sky-700 flex items-center"
@@ -182,10 +238,6 @@ function DanhSach() {
                   className="w-6 h-6 ml-2"
                 />
               </button>
-
-            </div>
-
-            <div className="flex items-center space-x-2">
               <select
                 className="border p-2 rounded border-blue-300"
                 value={selectedStatus}

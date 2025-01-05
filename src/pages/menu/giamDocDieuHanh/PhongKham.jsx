@@ -9,7 +9,6 @@ import ThongTinPhongKham from '../../NhomChucNang/PhongKham/ThongTinPhongKham';
 import NotFound from '../../NotFound';
 
 const tabConfig = [
-    { id: 'ThongKe', name: 'Thống kê', icon: faChartSimple, path: 'thong-ke' },
     { id: 'DanhSach', name: 'Danh sách', icon: faHospital, path: 'danh-sach' },
 ]
 
@@ -37,7 +36,7 @@ function TabMenu({ selectedTab, setSelectedTab }) {
 
 
 function App() {
-    const [selectedTab, setSelectedTab] = useState('ThongKe');
+    const [selectedTab, setSelectedTab] = useState('DanhSach');
     const location = useLocation();
 
     // Cập nhật selectedTab khi URL thay đổi
@@ -62,7 +61,7 @@ function App() {
             {/* Content */}
             <div className="flex-1 bg-white mt-4 p-4 rounded shadow w-full">
                 <Routes>
-                    <Route index element={<ThongKe />} />
+                    <Route index element={<DanhSach />} />
                     <Route path='thong-ke' element={<ThongKe />} />
                     <Route path='danh-sach' element={<DanhSach />}>
                         <Route path=':roomId' element={<ThongTinPhongKham />} />
